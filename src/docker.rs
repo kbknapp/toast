@@ -147,10 +147,19 @@ pub fn create_container(
     )?);
 
     args.extend(
-        vec![image, "/bin/su", "-c", command, user]
-            .into_iter()
-            .map(std::borrow::ToOwned::to_owned)
-            .collect::<Vec<_>>(),
+        vec![
+            image,
+            "/bin/sudo",
+            "-E",
+            "-u",
+            user,
+            "/bin/sh",
+            "-c",
+            command,
+        ]
+        .into_iter()
+        .map(std::borrow::ToOwned::to_owned)
+        .collect::<Vec<_>>(),
     );
 
     Ok(run_quiet(
@@ -498,7 +507,7 @@ pub fn spawn_shell(
     )?);
 
     args.extend(
-        vec![image, "/bin/su", user]
+        vec![image, "/bin/sudo", "-u", user, "-i"]
             .into_iter()
             .map(std::borrow::ToOwned::to_owned)
             .collect::<Vec<_>>(),
